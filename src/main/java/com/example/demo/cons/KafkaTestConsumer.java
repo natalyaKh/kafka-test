@@ -23,6 +23,7 @@ public class KafkaTestConsumer {
 
 	public List<RezEntity> rezentityList = new ArrayList();
 	public boolean stop;
+	public long offset = 0;
 
 	public void clearMessagesList() {
 		rezentityList.clear();
@@ -35,6 +36,7 @@ public class KafkaTestConsumer {
 		String bootstrapServers="localhost:9092";  
 		String grp_id="third_app";  
 		String topic="my-first";  
+		
 		//Creating consumer properties  
 		Properties properties=new Properties();  
 		properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers);  
@@ -43,14 +45,46 @@ public class KafkaTestConsumer {
 		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG,grp_id);  
 		properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
 		properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-		properties.setProperty(ConsumerConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, "30000");
+//		properties.setProperty(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "3000");
 
 		//        TopicPartition part = new TopicPartition(topic, 2) ;
 
 		
 //			//creating consumer  
-			KafkaConsumer<String,String> consumer= new KafkaConsumer<String,String>(properties);  
+			 
 			//Subscribing 
+			
+			if(offset != 0) {
+				 TopicPartition tp = new TopicPartition(topic, 0) ;
+				try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties)) {
+				    consumer.subscribe(Arrays.asList(topic), new ConsumerRebalanceListener() {
+				        @Override
+				        public void onPartitionsRevoked(Collection<TopicPartition> partitions) {}
+
+				        @Override
+				        public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+				            // Move to the desired start offset 
+				            consumer.seek(tp, offset);
+				        }
+				    });
+					//polling  
+					while(true){  
+						if(checkStopFlag()) break;
+						ConsumerRecords<String,String> records=consumer.poll(Duration.ofMillis(1));  
+						for(ConsumerRecord<String,String> record: records){                      
+							System.out.println("Key: "+ record.key() + ", Value:" +record.value());  
+							System.out.println("Partition:" + record.partition()+",Offset:"+record.offset());  
+							RezEntity entity = createEntityfromRecord(record);
+							rezentityList.add(entity);
+						}  
+					}
+				    
+				    this.offset = 0;
+				    System.out.println(offset + "offset ");
+					consumer.close();
+				}
+			}else {
+				KafkaConsumer<String,String> consumer= new KafkaConsumer<String,String>(properties); 
 			
 			consumer.subscribe(Arrays.asList(topic));  
 			//polling  
@@ -64,6 +98,9 @@ public class KafkaTestConsumer {
 					rezentityList.add(entity);
 				}  
 			}
+			consumer.close();
+			}
+			
 			this.stop = false;
 			System.out.println("stop --> " + this.stop);
 			return rezList; 
@@ -87,48 +124,53 @@ public class KafkaTestConsumer {
 		rez.setValue(record.value());
 		return rez;
 	}
-
-	public String changeOffset(long offset) {
-		
-
-		List<RezEntity>  rezList= new ArrayList();
-		String bootstrapServers="localhost:9092";  
-		String grp_id="third_app";  
-		String topic="my-first";  
-		//Creating consumer properties  
-		Properties properties=new Properties();  
-		properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers);  
-		properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,   StringDeserializer.class.getName());  
-		properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());  
-		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG,grp_id);  
-		properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
-		properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-		properties.setProperty(ConsumerConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, "30000");
-
-		        TopicPartition tp = new TopicPartition(topic, 0) ;
-
-		try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties)) {
-		    consumer.subscribe(Arrays.asList(topic), new ConsumerRebalanceListener() {
-		        @Override
-		        public void onPartitionsRevoked(Collection<TopicPartition> partitions) {}
-
-		        @Override
-		        public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-		            // Move to the desired start offset 
-		            consumer.seek(tp, offset);
-		        }
-		    });
-//		    boolean run = true;
-//		    long lastOffset = 96L;
-		    while (true) {
-		        ConsumerRecords<String, String> crs = consumer.poll(Duration.ofMillis(1L));
-		        for (ConsumerRecord<String, String> record : crs) {
-		            System.out.println(record);
-		        }
-		    }
-		}
-
+	public String changeOffset(long newOffset) {
+		offset = newOffset;
+		System.out.println(offset + "offset ");
+		return "Changed";
 	}
+
+//	public String changeOffset(long offset) {
+//		
+//
+//		List<RezEntity>  rezList= new ArrayList();
+//		String bootstrapServers="localhost:9092";  
+//		String grp_id="third_app";  
+//		String topic="my-first";  
+//		//Creating consumer properties  
+//		Properties properties=new Properties();  
+//		properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers);  
+//		properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,   StringDeserializer.class.getName());  
+//		properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());  
+//		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG,grp_id);  
+//		properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
+//		properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+//		properties.setProperty(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
+//
+//		        TopicPartition tp = new TopicPartition(topic, 0) ;
+//
+//		try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties)) {
+//		    consumer.subscribe(Arrays.asList(topic), new ConsumerRebalanceListener() {
+//		        @Override
+//		        public void onPartitionsRevoked(Collection<TopicPartition> partitions) {}
+//
+//		        @Override
+//		        public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+//		            // Move to the desired start offset 
+//		            consumer.seek(tp, offset);
+//		        }
+//		    });
+////		    boolean run = true;
+////		    long lastOffset = 96L;
+//		    while (true) {
+//		        ConsumerRecords<String, String> crs = consumer.poll(Duration.ofMillis(1L));
+//		        for (ConsumerRecord<String, String> record : crs) {
+//		            System.out.println(record);
+//		        }
+//		    }
+//		}
+//
+//	}
 	}
 
 
