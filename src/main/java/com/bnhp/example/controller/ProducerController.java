@@ -23,16 +23,18 @@ public class ProducerController {
 	@PostMapping("/{type}")
 	public String senfMessageFromProducer(@PathVariable String type, 
 			@RequestBody Producer1 messsage) {
-		
+		System.out.println("Hi, I am Producer with one field");
 		produceService.sendMessageFromProducer1(type, messsage);
+		System.out.println("Producer with one field --> finished");
 		return "OK";
 	}
 	
 	@PostMapping("/{type}/new")
 	public String senfMessageFromNewProducer(@PathVariable String type, 
 			@RequestBody Producer2 messsage) {
-		
+		System.out.println("Hi, I am Producer with two field");
 		produceService.sendMessageFromProducer2(type, messsage);
+		System.out.println("Producer with two field --> finished");
 		return "OK";
 	}
 	

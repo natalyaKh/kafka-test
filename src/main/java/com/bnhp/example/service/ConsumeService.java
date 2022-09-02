@@ -38,6 +38,8 @@ public class ConsumeService {
 	}
 
 	private void getMessageFromProducerSecondCloseConsumer(Properties properties) {
+		System.out.println(" I am service of CLOSE consumer with TWO fields ");
+		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "close_consumer_two_fields");
 		properties.setProperty(KafkaJsonSchemaDeserializerConfig.JSON_VALUE_TYPE, Consumer2.class.getName());
 		KafkaConsumer<Integer, Consumer2> consumer = new KafkaConsumer<>(properties);	
 		String topic = KafkaConfiguration.TOPIC_NAME;
@@ -46,13 +48,15 @@ public class ConsumeService {
 			ConsumerRecords<Integer, Consumer2> records = consumer.poll(Duration.ofMillis(100));
 			records.forEach(record -> {
 				Consumer2 userREcord = record.value();
-				System.out.println("Close consumer for message with one field " + userREcord.toString());
+				System.out.println("Close consumer for message with two field " + userREcord.toString());
 			});
 		}
 	}
 
 	private void getMessageFromProducerOneOpenConsumer(Properties properties) {
+		System.out.println(" I am service of OPEN consumer with ONE field ");
 		properties.setProperty(KafkaJsonSchemaDeserializerConfig.JSON_VALUE_TYPE, Consumer1.class.getName());
+		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "open_consumer_one_field");
 		//Open consumer
 		properties.setProperty(KafkaJsonSchemaDeserializerConfig.FAIL_INVALID_SCHEMA, "false");
 		KafkaConsumer<Integer, Consumer1> consumer = new KafkaConsumer<>(properties);	
@@ -62,7 +66,7 @@ public class ConsumeService {
 			ConsumerRecords<Integer, Consumer1> records = consumer.poll(Duration.ofMillis(100));
 			records.forEach(record -> {
 				Consumer1 userREcord = record.value();
-				System.out.println("Close consumer for message with one field " + userREcord.toString());
+				System.out.println("Open consumer for message with one field " + userREcord.toString());
 			});
 		}
 
@@ -79,7 +83,9 @@ public class ConsumeService {
 	}
 
 	private void getMessageFromProducerOne(Properties properties) {
+		System.out.println(" I am service of CLOSE consumer with ONE fields ");
 		properties.setProperty(KafkaJsonSchemaDeserializerConfig.JSON_VALUE_TYPE, Consumer1.class.getName());
+		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "close_consumer_one_field");
 		KafkaConsumer<Integer, Consumer1> consumer = new KafkaConsumer<Integer, Consumer1>(properties);	
 		String topic = KafkaConfiguration.TOPIC_NAME;
 		consumer.subscribe(Collections.singletonList(topic));
