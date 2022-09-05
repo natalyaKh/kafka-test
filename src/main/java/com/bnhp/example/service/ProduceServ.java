@@ -33,16 +33,19 @@ public class ProduceServ {
 		}
 	}
 
+	/*
+	 * close producer
+	 * do not check schema
+	 */
 	private void sendCloseMessageProducer1(Producer1 messsage) {
 		Properties properties = new Properties();
-
 		properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConfiguration.BOOTSTRAP_SERVICE);
 		properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class.getName());
 		properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class.getName());
 		properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class.getName());
 		properties.setProperty(KafkaJsonSchemaSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, KafkaConfiguration.SCHEMA_REGISTRY_URL);
 		properties.setProperty(KafkaJsonSchemaSerializerConfig.AUTO_REGISTER_SCHEMAS, "false");
-		
+		System.out.println("Producer with one field --> CLOSE producer statred");
 		KafkaProducer<Integer, Producer1> producer = new KafkaProducer<Integer, Producer1>(properties);
 		ProducerRecord<Integer, Producer1> record = new ProducerRecord<Integer, Producer1>(
 				KafkaConfiguration.TOPIC_NAME, 1, messsage);
@@ -52,9 +55,13 @@ public class ProduceServ {
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
+	/*
+	 * open producer
+	 * check schema
+	 */
 	private void sendOpenMessageProducer1(Producer1 messsage) {
 		Properties properties = new Properties();
 
@@ -64,10 +71,14 @@ public class ProduceServ {
 		properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class.getName());
 		properties.setProperty(KafkaJsonSchemaSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, KafkaConfiguration.SCHEMA_REGISTRY_URL);
 		properties.setProperty(KafkaJsonSchemaSerializerConfig.AUTO_REGISTER_SCHEMAS, "false");
-		//open schema
+		//open schema (application.properties = true)
 		properties.setProperty(KafkaJsonSchemaSerializerConfig.FAIL_UNKNOWN_PROPERTIES, "false");
-
+		//if value 'true' - producer will check schema registry before sending message
+		// looks like he check only required fields
+		properties.setProperty(KafkaJsonSchemaSerializerConfig.FAIL_INVALID_SCHEMA, "true");
+		System.out.println("Producer with one field --> OPEN producer statred");
 		KafkaProducer<Integer, Producer1> producer = new KafkaProducer<Integer, Producer1>(properties);
+		messsage.setId(null);
 		ProducerRecord<Integer, Producer1> record = new ProducerRecord<Integer, Producer1>(
 				KafkaConfiguration.TOPIC_NAME, 1, messsage);
 		try {
@@ -92,6 +103,10 @@ public class ProduceServ {
 		}
 	}
 
+	/*
+	 * close producer
+	 * do not check schema
+	 */
 	private void sendCloseMessageProducer2(Producer2 messsage) {
 		Properties properties = new Properties();
 
@@ -101,7 +116,7 @@ public class ProduceServ {
 		properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class.getName());
 		properties.setProperty(KafkaJsonSchemaSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, KafkaConfiguration.SCHEMA_REGISTRY_URL);
 		properties.setProperty(KafkaJsonSchemaSerializerConfig.AUTO_REGISTER_SCHEMAS, "false");
-		
+		System.out.println("Producer with two field --> CLOSE producer statred");
 
 		KafkaProducer<Integer, Producer2> producer = new KafkaProducer<Integer, Producer2>(properties);
 		ProducerRecord<Integer, Producer2> record = new ProducerRecord<Integer, Producer2>(
@@ -112,9 +127,13 @@ public class ProduceServ {
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
+	/*
+	 * open producer
+	 * check schema
+	 */
 	private void sendOpenMessageProducer2(Producer2 messsage) {
 		Properties properties = new Properties();
 
@@ -126,8 +145,12 @@ public class ProduceServ {
 		properties.setProperty(KafkaJsonSchemaSerializerConfig.AUTO_REGISTER_SCHEMAS, "false");
 		//open schema
 		properties.setProperty(KafkaJsonSchemaSerializerConfig.FAIL_UNKNOWN_PROPERTIES, "false");
-
+		//if value 'true' - producer will check schema registry before sending message
+		// looks like he check only required fields
+		properties.setProperty(KafkaJsonSchemaSerializerConfig.FAIL_INVALID_SCHEMA, "true");
+		System.out.println("Producer with two field --> OPEN producer statred");
 		KafkaProducer<Integer, Producer2> producer = new KafkaProducer<Integer, Producer2>(properties);
+		messsage.setId(null);
 		ProducerRecord<Integer, Producer2> record = new ProducerRecord<Integer, Producer2>(
 				KafkaConfiguration.TOPIC_NAME, 1, messsage);
 		try {
@@ -136,9 +159,6 @@ public class ProduceServ {
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-
-
-
 }
