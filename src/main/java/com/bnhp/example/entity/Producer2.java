@@ -1,11 +1,10 @@
 package com.bnhp.example.entity;
 
-
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Producer2 {
 
-
+	@JsonProperty(required = true)
 	Integer id;
 	String name;
 	

@@ -37,28 +37,44 @@ public class ConsumeService {
 
 	}
 
+	 /*
+	  * open consumer
+	  * check schema - looks like consumer check required fields only
+	  * this is consumer with 2 fields
+	  */
 	private void getMessageFromProducerSecondCloseConsumer(Properties properties) {
 		System.out.println(" I am service of CLOSE consumer with TWO fields ");
-		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "close_consumer_two_fields");
 		properties.setProperty(KafkaJsonSchemaDeserializerConfig.JSON_VALUE_TYPE, Consumer2.class.getName());
+		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "open_consumer_two_field2");
+		//Open consumer
+		properties.setProperty(KafkaJsonSchemaDeserializerConfig.FAIL_UNKNOWN_PROPERTIES, "false");
+		properties.setProperty(KafkaJsonSchemaDeserializerConfig.FAIL_INVALID_SCHEMA, "true");
+	
 		KafkaConsumer<Integer, Consumer2> consumer = new KafkaConsumer<>(properties);	
 		String topic = KafkaConfiguration.TOPIC_NAME;
 		consumer.subscribe(Collections.singletonList(topic));
 		while(true) {
 			ConsumerRecords<Integer, Consumer2> records = consumer.poll(Duration.ofMillis(100));
 			records.forEach(record -> {
-				Consumer2 userREcord = record.value();
-				System.out.println("Close consumer for message with two field " + userREcord.toString());
+				 Consumer2 userREcord = record.value();
+				System.out.println("Open consumer for message with one field " + userREcord.toString());
 			});
 		}
 	}
 
+	/*
+	 * open consumer
+	 * check scema
+	 * consumer with 1 field (required)
+	 */
 	private void getMessageFromProducerOneOpenConsumer(Properties properties) {
 		System.out.println(" I am service of OPEN consumer with ONE field ");
 		properties.setProperty(KafkaJsonSchemaDeserializerConfig.JSON_VALUE_TYPE, Consumer1.class.getName());
 		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "open_consumer_one_field");
 		//Open consumer
-		properties.setProperty(KafkaJsonSchemaDeserializerConfig.FAIL_INVALID_SCHEMA, "false");
+		properties.setProperty(KafkaJsonSchemaDeserializerConfig.FAIL_UNKNOWN_PROPERTIES, "false");
+		properties.setProperty(KafkaJsonSchemaDeserializerConfig.FAIL_INVALID_SCHEMA, "true");
+	
 		KafkaConsumer<Integer, Consumer1> consumer = new KafkaConsumer<>(properties);	
 		String topic = KafkaConfiguration.TOPIC_NAME;
 		consumer.subscribe(Collections.singletonList(topic));
@@ -82,6 +98,11 @@ public class ConsumeService {
 		return properties;
 	}
 
+	/*
+	 * close consumer
+	 * do not check schema
+	 * consumer with one field
+	 */
 	private void getMessageFromProducerOne(Properties properties) {
 		System.out.println(" I am service of CLOSE consumer with ONE fields ");
 		properties.setProperty(KafkaJsonSchemaDeserializerConfig.JSON_VALUE_TYPE, Consumer1.class.getName());
