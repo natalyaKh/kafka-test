@@ -1,0 +1,260 @@
+{
+	"info": {
+		"_postman_id": "64af5e12-670d-4a39-9d86-8904befe0401",
+		"name": "SchemaRegistryCompatibility",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get CLOSE PR 1 schema registry",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/schema/false/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"schema",
+						"false",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get CLOSE PR2 schema registry",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/schema/false/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"schema",
+						"false",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PR1 CLOSE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":25\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/producer/close",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"producer",
+						"close"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PR1 OPEN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":22\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/producer/open",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"producer",
+						"open"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PR2 CLOSE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":21,\r\n    \"name\":\"test close producer\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/producer/close/new",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"producer",
+						"close",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PR2 OPEN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":22\r\n    ,\r\n    \"name\":\"test open producer\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/producer/open/new",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"producer",
+						"open",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CONS1 OPEN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/consumer/open",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"consumer",
+						"open"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CONS1 CLOSE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/consumer/close",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"consumer",
+						"close"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CONS2 CLOSE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/consumer/new",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"consumer",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get OPENPR 2 schema registry",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/schema/true/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"schema",
+						"true",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get OPENPR 1 schema registry",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/schema/true/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"schema",
+						"true",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
